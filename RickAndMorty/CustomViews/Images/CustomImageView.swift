@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ImageView: UIImageView {
+class CustomImageView: UIImageView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -24,9 +24,8 @@ class ImageView: UIImageView {
     }
     
     private func configure() {
-        backgroundColor = .red
         clipsToBounds               = true
-        contentMode                 = .scaleAspectFit
+        contentMode                 = .scaleAspectFill
         isUserInteractionEnabled    = true
         translatesAutoresizingMaskIntoConstraints = false
     }

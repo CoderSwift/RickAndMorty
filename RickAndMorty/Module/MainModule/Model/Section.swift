@@ -9,5 +9,5 @@ import UIKit
 
 struct NavigationInfo {
     var title: String?
-    var image: String?
+    var image: UIImage?
 }

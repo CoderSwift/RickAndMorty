@@ -8,29 +8,22 @@
 import UIKit
 
 protocol MainViewProtocol {
-    func setGreeting(text:String)
+    
 }
 
 protocol MainPresenterProtocol {
-    init (view:MainViewProtocol)
-    func showGreeting()
+    init (view:MainViewProtocol, model: [NavigationInfo])
+    var navigationInfo: [NavigationInfo]? { get set }
 }
 
 class MainPresenter: MainPresenterProtocol {
-    
-    
     var view: MainViewProtocol?
+    var navigationInfo: [NavigationInfo]?
     
-    required init(view: MainViewProtocol) {
+    required init(view: MainViewProtocol, model: [NavigationInfo]) {
         self.view = view
+        self.navigationInfo = model
     }
-    
-    func showGreeting() {
-        let text = "Print new message"
-        self.view?.setGreeting(text: text)
-    }
-    
-    
     
     func startAnimation(indicatorImage:UIImageView) {
         UIView.animate(withDuration: 1, delay: 0, options: .curveLinear) { [self] in
