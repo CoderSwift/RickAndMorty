@@ -9,19 +9,22 @@ import UIKit
 
 class MainViewController: UIViewController {
     
-    let loaderView =  LoaderView()
-    let titleSection =  CustomLabel()
+    
+    let titleSection =  CustomLabel(textAlignment: .center, color: .black, font: UIFont.boldFont(ofSize: 24))
     var collectionView: UICollectionView!
     var presenter: MainPresenterProtocol!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureStyleViewController()
+        setStyleViewController()
         configureCollectionView()
     }
     
-    func configureStyleViewController(){
+   
+    
+    func setStyleViewController(){
         self.navigationItem.title = "Choose section"
+        self.navigationItem.setHidesBackButton(true, animated: true)
         self.view.backgroundColor = Backgrounds.darkGray
     }
     
@@ -73,8 +76,13 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let characterViewController = ModuleBuilder.createChartacter()
-        self.navigationController?.pushViewController(characterViewController, animated: true)
+
+            let characterViewController = ModuleBuilder.createChartacter()
+            self.navigationController?.pushViewController(characterViewController, animated: true)
+            guard let titlePage = presenter.navigationInfo?[indexPath.row].title else {return}
+            characterViewController.navigationItem.title = titlePage
+
+       
     }
     
 }

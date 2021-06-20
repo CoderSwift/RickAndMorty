@@ -4,7 +4,7 @@ class ThemesCollectionViewCell: UICollectionViewCell {
     
     static let reuseID = "ThemesCell"
     
-    let themesImage = CustomImageView(radius: 15, frame: .zero)
+    let themesImage = CustomImageView(radius: 15, frame: .zero, contentMode: .scaleAspectFill)
     let themesLabel = CustomLabel(textAlignment: .center, color: .black, font: UIFont.boldFont(ofSize: 20))
     
     override init(frame: CGRect) {

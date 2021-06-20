@@ -1,12 +1,12 @@
 {
   "images" : [
     {
-      "filename" : "image-loader.png",
+      "filename" : "image-indicator.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "image-loader@2x.png",
+      "filename" : "image-indicator@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },

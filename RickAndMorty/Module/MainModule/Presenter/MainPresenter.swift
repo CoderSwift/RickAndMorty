@@ -25,16 +25,4 @@ class MainPresenter: MainPresenterProtocol {
         self.navigationInfo = model
     }
     
-    func startAnimation(indicatorImage:UIImageView) {
-        UIView.animate(withDuration: 1, delay: 0, options: .curveLinear) { [self] in
-            indicatorImage.transform = CGAffineTransform(rotationAngle: .pi)
-        } completion: { (complated) in
-            UIView.animate(withDuration: 1, delay: 0, options: .curveLinear) {
-                indicatorImage.transform = CGAffineTransform(rotationAngle: 0)
-            } completion: { (complated) in
-                self.startAnimation(indicatorImage: indicatorImage)
-            }
-        }
-    }
-    
 }
