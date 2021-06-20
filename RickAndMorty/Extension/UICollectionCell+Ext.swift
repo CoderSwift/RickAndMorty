@@ -7,7 +7,8 @@ extension UIView {
         layer.shadowOffset      = CGSize(width: 0, height: 1.0)
         layer.shadowRadius      = shadowSize
         layer.shadowOpacity     = shadowOpacity
-        layer.masksToBounds     = false
+        layer.masksToBounds     = true
+        
         layer.shadowPath        = UIBezierPath(roundedRect: bounds,  cornerRadius: radius).cgPath
         layer.cornerRadius      = radius
         layer.maskedCorners     = byRoundingCorners

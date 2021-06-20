@@ -1,12 +1,12 @@
 {
   "images" : [
     {
-      "filename" : "loaderTitle.png",
+      "filename" : "image-loaderImage.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "loaderTitle@2x.png",
+      "filename" : "image-loaderImage@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },

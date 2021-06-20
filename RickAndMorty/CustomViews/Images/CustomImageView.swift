@@ -18,14 +18,14 @@ class CustomImageView: UIImageView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    convenience init(radius:CGFloat, frame:CGRect) {
+    convenience init(radius:CGFloat, frame:CGRect, contentMode: UIView.ContentMode ) {
         self.init(frame: .zero)
         layer.cornerRadius = radius
+        self.contentMode = contentMode
     }
     
     private func configure() {
         clipsToBounds               = true
-        contentMode                 = .scaleAspectFill
         isUserInteractionEnabled    = true
         translatesAutoresizingMaskIntoConstraints = false
     }

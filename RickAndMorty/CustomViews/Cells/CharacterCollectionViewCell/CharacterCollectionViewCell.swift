@@ -11,8 +11,9 @@ class CharacterCollectionViewCell:UICollectionViewCell {
     
     static let reuseID = "CharacterCell"
     
-    let imageCell = CustomImageView(radius: 15, frame: .zero)
+    let imageCell = CustomImageView(radius: 15, frame: .zero, contentMode: .scaleAspectFill)
     let labelView = UIView()
+    
     let titleLabel = CustomLabel(textAlignment: .center, color: .black, font: UIFont.boldFont(ofSize: 16))
     
     override init(frame: CGRect) {
@@ -24,15 +25,16 @@ class CharacterCollectionViewCell:UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-     func setData(data: CharactersData){
-        guard let image = data.result?.image else {return}
-        self.imageCell.image = UIImage(named: image)
-        self.titleLabel.text = data.result?.name
+    func setData(dataModel: CharactersResult?){
+        guard let image = dataModel?.image else {return}
+        self.imageCell.url(image)
+        self.titleLabel.text = dataModel?.name
     }
     
     func configureCell() {
         addSubviews(imageCell,labelView,titleLabel)
         labelView.backgroundColor = .white
+        imageCell.image = Image.placeholderImage
         imageCell.translatesAutoresizingMaskIntoConstraints = false
         labelView.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
