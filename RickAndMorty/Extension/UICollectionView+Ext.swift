@@ -1,14 +1,6 @@
-//
-//  UITableView+Ext.swift
-//  RickAndMorty
-//
-//  Created by coder on 9.06.21.
-//
-
 import UIKit
 
 extension UICollectionView {
-    
     func setLoading(){
         let activityIndicatorView = UIActivityIndicatorView(style: .medium)
         activityIndicatorView.color = .white
@@ -16,17 +8,12 @@ extension UICollectionView {
         activityIndicatorView.startAnimating()
     }
     
-   
     func setError(superview: UIView) {
         let error = ErrorView(frame: CGRect(x: 0, y: 0, width: superview.frame.size.width, height: superview.frame.size.height))
-        
         backgroundView = error
     }
     
-    func restore() {
-        
+    func resetError() {
         backgroundView = nil
     }
-    
-    
 }

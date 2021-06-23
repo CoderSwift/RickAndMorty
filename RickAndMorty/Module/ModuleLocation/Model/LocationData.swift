@@ -14,9 +14,3 @@ struct LocationsResult:Decodable {
     var type: String?
     var dimension: String?
 }
-
-enum LocationsResultType: String {
-    case name = "Name"
-    case type = "Type"
-    case dimension = "Dimension"
-}

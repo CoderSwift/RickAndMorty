@@ -1,17 +1,8 @@
-//
-//  LaunchViewController.swift
-//  RickAndMorty
-//
-//  Created by coder on 12.06.21.
-//
-
 import UIKit
 
 class LaunchViewController: UIViewController {
-    
-    var headerImage = CustomImageView(radius: 0, frame: .zero, contentMode: .scaleAspectFit)
-    var indicatorImage = CustomImageView(radius: 0, frame: .zero, contentMode: .scaleAspectFit)
-    
+    private var headerImage = CustomImageView(radius: 0, frame: .zero, contentMode: .scaleAspectFit)
+    private var indicatorImage = CustomImageView(radius: 0, frame: .zero, contentMode: .scaleAspectFit)
     var presenter: LaunchPresenter!
     
     override func viewDidLoad() {
@@ -34,7 +25,7 @@ class LaunchViewController: UIViewController {
         navigationController?.setNavigationBarHidden(false, animated: animated)
     }
     
-    func setStyleViewController(){
+    private func setStyleViewController(){
         self.view.backgroundColor = Backgrounds.darkGray
     }
     
@@ -59,7 +50,6 @@ class LaunchViewController: UIViewController {
             indicatorImage.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: Constraints.aspectRatioIndicatorImage)
         ])
     }
-    
 }
 
 extension LaunchViewController: LaunchViewProtocol{

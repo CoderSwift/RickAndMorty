@@ -1,103 +1,71 @@
-//
-//  FilterViewController.swift
-//  RickAndMorty
-//
-//  Created by coder on 8.06.21.
-//
-
 import UIKit
 
-protocol ReloadDelegate {
-    func reloadTable()
-}
-
-protocol CharacterFilterDelegate {
-    func tapApplyFilter()
-}
-
 class FilterViewController: UIViewController {
-    
-    
+    private var tableView: UITableView!
+    private var filterButton = CustomButton(title: "Apply filter")
     var presenter: FilterPresenterProtocol?
-    var delegate: selectedFilterDelegate?
-    var delegateTable: ReloadDelegate?
-    var filter: FilterUserDefaults?
-    var characterFilterDelegate: CharacterFilterDelegate?
-    var cell = FilterTableViewCell()
-    var filterButton = CustomButton(title: "Apply filter")
-    var tableView: UITableView!
-    
-    var currentIndexFilter = ["Status": Int?.none, "Gender": Int?.none]
-    
-    
+    var parentPresent: CharacterPresenterProtocol?
+   
     override func viewDidLoad() {
         super.viewDidLoad()
         setStyleViewController()
         configureButton()
         configureTableView()
-        self.filter = UserDefaultsManager.shared.getSettings()
     }
-    
-    
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         presenter?.setFilterSelected()
     }
     
-    func setStyleViewController (){
-        self.navigationItem.title = "Filter"
-        self.view.backgroundColor = Backgrounds.darkGray
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(true)
+        presenter?.saveFilter()
     }
     
-    func configureButton() {
+    private func setStyleViewController() {
+        navigationItem.title = "Filter"
+        view.backgroundColor = Backgrounds.darkGray
+    }
+    
+    private func configureButton() {
         view.addSubview(filterButton)
         filterButton.addTarget(self, action: #selector(applyFilter), for: .touchUpInside)
         
         NSLayoutConstraint.activate([
-            
             filterButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constraints.margin),
             filterButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constraints.margin),
             filterButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -Constraints.margin),
-            filterButton.heightAnchor.constraint(equalToConstant: Constraints.heightButtonFilter)
-            
+            filterButton.heightAnchor.constraint(equalToConstant: 44)
+
         ])
-        
     }
     
     @objc func applyFilter() {
-        
-        self.presenter?.setFilterToUserDefaults()
-        characterFilterDelegate?.tapApplyFilter()
-        self.navigationController?.popViewController(animated: true)
-        
+        presenter?.setFilterToUserDefaults()
+        parentPresent?.requestDataByFilter()
+        navigationController?.popViewController(animated: true)
     }
     
-    func configureTableView() {
-        tableView = UITableView(frame: .zero)
+    private func configureTableView() {
+        tableView                                           = UITableView(frame: .zero)
         view.addSubview(tableView)
-        tableView.backgroundColor = .clear
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.separatorStyle = .none
-        tableView.separatorInset.left = 0
-        tableView.isScrollEnabled = false
+        tableView.backgroundColor                           = .clear
+        tableView.delegate                                  = self
+        tableView.dataSource                                = self
+        tableView.separatorStyle                            = .none
+        tableView.separatorInset.left                       = 0
+        tableView.isScrollEnabled                           = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.register(FilterTableViewCell.self, forCellReuseIdentifier: FilterTableViewCell.reuseID)
-        tableView.register(DescriptionTableViewCell.self, forCellReuseIdentifier: DescriptionTableViewCell.reuseID)
+        tableView.register(FilterTableViewCell.self, forCellReuseIdentifier: Cell.reuseFilterID)
         
         NSLayoutConstraint.activate([
-            
-            tableView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor, constant: .zero),
-            tableView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: .zero),
-            tableView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: .zero),
-            tableView.bottomAnchor.constraint(equalTo: self.filterButton.topAnchor, constant: Constraints.margin)
-            
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: .zero),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: .zero),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: .zero),
+            tableView.bottomAnchor.constraint(equalTo: filterButton.topAnchor, constant: -Constraints.margin)
         ])
     }
-    
-    
-    
 }
 
 extension FilterViewController: UITableViewDelegate, UITableViewDataSource {
@@ -118,83 +86,40 @@ extension FilterViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
-    
-    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return Constraints.heightTableViewCell
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let headerView = HeaderFilterView(frame: .zero)
-        delegateTable = self
-        delegate = cell
-        
-        switch section {
-        case 0:
-            headerView.setTitle(title: "Status")
-            presenter?.currentStatus == "" ? headerView.setEnabledButton(false) : headerView.setEnabledButton(true)
-            headerView.resetButton.addTarget(self, action: #selector(firstSectionTapped), for: .touchUpInside)
-        default:
-            headerView.setTitle(title: "Gender")
-            presenter?.currentGender == "" ? headerView.setEnabledButton(false)  : headerView.setEnabledButton(true)
-            headerView.resetButton.addTarget(self, action: #selector(secondSectionTapped), for: .touchUpInside)
-        }
-        return headerView
-    }
-    
-    @objc func firstSectionTapped(){
-        delegate?.isSelectedAll(false)
-        delegateTable?.reloadTable()
-        presenter?.stateCellStatus.removeAll()
-        presenter?.currentStatus = ""
-        
-    }
-    
-    @objc func secondSectionTapped(){
-        delegate?.isSelectedAll(false)
-        delegateTable?.reloadTable()
-        presenter?.stateCellGender.removeAll()
-        presenter?.currentGender = ""
+        presenter?.setHeaderViewForTableView(section: section)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let currentIndex = indexPath.row
+        
         switch indexPath.section {
         case 0:
-            
-            let cell = tableView.dequeueReusableCell(withIdentifier: FilterTableViewCell.reuseID, for: indexPath) as! FilterTableViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: Cell.reuseFilterID, for: indexPath) as! FilterTableViewCell
             let selected = currentIndex == presenter?.stateCellStatus["selectedStatus"]
             cell.setTitleCell(title: presenter?.filterStatus[indexPath.row].rawValue)
             cell.isSelected(selected)
             return cell
-            
         default:
-            
-            let cell = tableView.dequeueReusableCell(withIdentifier: FilterTableViewCell.reuseID, for: indexPath) as! FilterTableViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: Cell.reuseFilterID, for: indexPath) as! FilterTableViewCell
             let selected = currentIndex == presenter?.stateCellGender["selectedGender"]
             cell.setTitleCell(title: presenter?.filterGender[indexPath.row].rawValue)
             cell.isSelected(selected)
             return cell
-            
         }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         presenter?.selectedOptionFiltered(indexPath: indexPath)
-        
     }
 }
 
 extension FilterViewController: FilterViewProtocol{
-    func reloadCollectionView() {
-        tableView.reloadData()
-    }
-    
-    
-}
-
-extension FilterViewController: ReloadDelegate {
-    func reloadTable() {
+    func succes() {
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }

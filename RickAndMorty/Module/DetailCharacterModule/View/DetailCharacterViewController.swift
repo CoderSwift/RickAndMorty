@@ -1,20 +1,10 @@
-//
-//  DetailCharacterViewController.swift
-//  RickAndMorty
-//
-//  Created by coder on 6.06.21.
-//
-
 import UIKit
 
 class DetailCharacterViewController: UIViewController {
-    
-    var detailImageBox = UIView()
-    var tableView: UITableView!
-    var detailImage = CustomImageView(frame: .zero)
+    private var detailImageBox = UIView()
+    private var tableView: UITableView!
+    private var detailImage = CustomImageView(frame: .zero)
     var presenter: DetailCharacterPresenterProtocol!
-    var characterData: CharactersResult?
-    var titleViewController: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,19 +14,21 @@ class DetailCharacterViewController: UIViewController {
         presenter.setCharacter()
     }
     
-    func setStyleViewController (){
-        self.navigationItem.title = presenter.characterData?.name
-        self.view.backgroundColor = Backgrounds.darkGray
+    private func setStyleViewController (){
+        navigationItem.title = presenter.characterData?.name
+        view.backgroundColor = Backgrounds.darkGray
     }
     
-    func configureImage(){
+    private func configureImage(){
         view.addSubview(detailImageBox)
+        
         detailImageBox.addSubview(detailImage)
         detailImageBox.translatesAutoresizingMaskIntoConstraints = false
-        detailImage.image = Image.placeholderImage
         detailImageBox.shadowDecorate(radius: 15, byRoundingCorners: [.layerMaxXMaxYCorner,.layerMaxXMinYCorner,.layerMinXMaxYCorner,.layerMinXMinYCorner], shadowSize: 4, shadowOpacity: 0.2)
+        
+        detailImage.image = Image.placeholderImage
+        
         NSLayoutConstraint.activate([
-            
             detailImageBox.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Constraints.marginTopBottom),
             detailImageBox.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constraints.margin),
             detailImageBox.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constraints.margin),
@@ -46,38 +38,33 @@ class DetailCharacterViewController: UIViewController {
             detailImage.leadingAnchor.constraint(equalTo: detailImageBox.leadingAnchor, constant: .zero),
             detailImage.trailingAnchor.constraint(equalTo: detailImageBox.trailingAnchor, constant: .zero),
             detailImage.bottomAnchor.constraint(equalTo: detailImageBox.bottomAnchor,  constant: .zero)
-            
-            
         ])
     }
     
-    func  configureTableView(){
-        tableView = UITableView(frame: .zero)
+    private func  configureTableView(){
+        tableView                                               = UITableView(frame: .zero)
         view.addSubview(tableView)
-        tableView.translatesAutoresizingMaskIntoConstraints  = false
-        tableView.backgroundColor = .clear
-        tableView.separatorStyle = .none
-        tableView.separatorInset.left = 0
-        tableView.dataSource = self
-        tableView.isScrollEnabled = false
+        tableView.translatesAutoresizingMaskIntoConstraints     = false
+        tableView.backgroundColor                               = .clear
+        tableView.separatorStyle                                = .none
+        tableView.separatorInset.left                           = 0
+        tableView.dataSource                                    = self
+        tableView.isScrollEnabled                               = false
         tableView.register(DescriptionCharacterTableViewCell.self, forCellReuseIdentifier: Cell.reuseDetailCharacterID)
         
         NSLayoutConstraint.activate([
-            
             tableView.topAnchor.constraint(equalTo: detailImageBox.bottomAnchor, constant: Constraints.marginTopBottom),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constraints.margin),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constraints.margin),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: Constraints.margin)
-            
         ])
     }
-    
 }
 
 extension DetailCharacterViewController: DetailCharacterViewProtocol {
     func setCharacter(dataCharacter: CharactersResult?) {
         guard let image = dataCharacter?.image else {return}
-        self.detailImage.url(image)
+        detailImage.url(image)
     }
 }
 

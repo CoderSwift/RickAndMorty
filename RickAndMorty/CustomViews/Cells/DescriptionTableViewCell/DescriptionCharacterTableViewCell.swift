@@ -1,17 +1,6 @@
-//
-//  DescriptionTableViewCell.swift
-//  RickAndMorty
-//
-//  Created by coder on 6.06.21.
-//
-
 import UIKit
 
-
-class DescriptionTableViewCell: UITableViewCell {
-    
-    static let reuseID = "DescriptionTableViewCell"
-    
+class DescriptionCharacterTableViewCell: UITableViewCell {
     var titleCell = CustomLabel(textAlignment: .left, color: Color.orangeColor, font: UIFont.boldFont(ofSize: 18))
     var descriptionCell = CustomLabel(textAlignment: .left, color: .white, font: UIFont.normalFont(ofSize: 18))
     
@@ -24,23 +13,20 @@ class DescriptionTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
-    
-    func configure() {
+    private func configure() {
+        backgroundColor     = .clear
+        selectionStyle      = .none
+        
         addSubviews(titleCell,descriptionCell)
-        backgroundColor = .clear
-        self.selectionStyle = .none
+
         NSLayoutConstraint.activate([
-            
-            titleCell.leftAnchor.constraint(equalTo: self.leftAnchor, constant: .zero),
-            titleCell.centerYAnchor.constraint(equalTo: self.centerYAnchor),
+            titleCell.leftAnchor.constraint(equalTo: leftAnchor, constant: .zero),
+            titleCell.centerYAnchor.constraint(equalTo: centerYAnchor),
             
             descriptionCell.leftAnchor.constraint(equalTo: titleCell.rightAnchor, constant: Constraints.marginTopBottom),
-            descriptionCell.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: .zero),
-            descriptionCell.centerYAnchor.constraint(equalTo: self.centerYAnchor)
-            
+            descriptionCell.trailingAnchor.constraint(equalTo: trailingAnchor, constant: .zero),
+            descriptionCell.centerYAnchor.constraint(equalTo: centerYAnchor)
         ])
-        
     }
     
     func setData(title: String?, value: String?) {

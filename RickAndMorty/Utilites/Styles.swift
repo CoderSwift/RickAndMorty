@@ -1,12 +1,4 @@
-//
-//  Styles.swift
-//  RickAndMorty
-//
-//  Created by coder on 19.05.21.
-//
-
 import UIKit
-
 
 enum PropLabel {
     case text(_: String)

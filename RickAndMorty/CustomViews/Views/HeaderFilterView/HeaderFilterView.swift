@@ -1,27 +1,14 @@
-//
-//  HeaderFilterView.swift
-//  RickAndMorty
-//
-//  Created by coder on 9.06.21.
-//
-
 import UIKit
 
-
 class HeaderFilterView: UIView {
-    
     var titleLabel = CustomLabel(textAlignment: .left, color: Color.orangeColor, font: UIFont.boldFont(ofSize: 16))
     var resetButton = UIButton()
     var enabledButton:CGFloat = 1
     var disabledButton:CGFloat = 0.5
-    var callback: ()->() = {}
    
-
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        configurate()
-        
+        configure()
     }
     
     required init?(coder: NSCoder) {
@@ -38,25 +25,25 @@ class HeaderFilterView: UIView {
         resetButton.alpha = enabled
     }
     
-    func configurate(){
+    private func configure() {
         addSubviews(titleLabel,resetButton)
-        resetButton.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+       
+        titleLabel.translatesAutoresizingMaskIntoConstraints    = false
+        
+        resetButton.translatesAutoresizingMaskIntoConstraints   = false
+        resetButton.titleLabel?.font                            = UIFont.boldFont(ofSize: 16)
         resetButton.setTitle("Reset", for: .normal)
-        resetButton.titleLabel?.font = UIFont.boldFont(ofSize: 16)
         resetButton.setTitleColor(Color.redColor, for: .normal)
         resetButton.addTarget(self, action: #selector(resetFilter), for: .touchUpInside)
+        
         NSLayoutConstraint.activate([
-        
-            titleLabel.leftAnchor.constraint(equalTo: self.leftAnchor, constant: Constraints.margin),
-            titleLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor),
+            titleLabel.leftAnchor.constraint(equalTo: leftAnchor, constant: Constraints.margin),
+            titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
             
-            resetButton.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -Constraints.margin),
-            resetButton.centerYAnchor.constraint(equalTo: self.centerYAnchor)
-        
+            resetButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -Constraints.margin),
+            resetButton.centerYAnchor.constraint(equalTo: centerYAnchor)
         ])
     }
-    
 
     @objc func resetFilter() {
         setEnabledButton(false)
