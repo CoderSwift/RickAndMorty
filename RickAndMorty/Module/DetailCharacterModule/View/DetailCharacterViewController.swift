@@ -9,21 +9,19 @@ import UIKit
 
 class DetailCharacterViewController: UIViewController {
     
-    var presenter: DetailCharacterPresenterProtocol!
-    var titleViewController: String?
-    var characterData: CharactersResult?
     var detailImageBox = UIView()
-    var detailImage = CustomImageView(frame: .zero)
     var tableView: UITableView!
+    var detailImage = CustomImageView(frame: .zero)
+    var presenter: DetailCharacterPresenterProtocol!
+    var characterData: CharactersResult?
+    var titleViewController: String?
     
     override func viewDidLoad() {
-        
         super.viewDidLoad()
         setStyleViewController()
         configureImage()
         configureTableView()
         presenter.setCharacter()
-    
     }
     
     func setStyleViewController (){
@@ -62,7 +60,7 @@ class DetailCharacterViewController: UIViewController {
         tableView.separatorInset.left = 0
         tableView.dataSource = self
         tableView.isScrollEnabled = false
-        tableView.register(DescriptionTableViewCell.self, forCellReuseIdentifier: DescriptionTableViewCell.reuseID)
+        tableView.register(DescriptionCharacterTableViewCell.self, forCellReuseIdentifier: Cell.reuseDetailCharacterID)
         
         NSLayoutConstraint.activate([
             
@@ -77,13 +75,10 @@ class DetailCharacterViewController: UIViewController {
 }
 
 extension DetailCharacterViewController: DetailCharacterViewProtocol {
-    
     func setCharacter(dataCharacter: CharactersResult?) {
         guard let image = dataCharacter?.image else {return}
         self.detailImage.url(image)
     }
-    
-    
 }
 
 extension DetailCharacterViewController: UITableViewDataSource {
@@ -91,9 +86,8 @@ extension DetailCharacterViewController: UITableViewDataSource {
         return presenter.characterDataRow.count
     }
     
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: DescriptionTableViewCell.reuseID, for: indexPath) as! DescriptionTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: Cell.reuseDetailCharacterID, for: indexPath) as! DescriptionCharacterTableViewCell
         let infoType = presenter.characterDataRow[indexPath.row]
         switch infoType {
         case .name:
@@ -107,5 +101,4 @@ extension DetailCharacterViewController: UITableViewDataSource {
         }
         return cell
     }
-    
 }

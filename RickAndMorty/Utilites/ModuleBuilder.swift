@@ -1,24 +1,16 @@
-//
-//  ModuleBuilder.swift
-//  RickAndMorty
-//
-//  Created by coder on 28.05.21.
-//
-
 import UIKit
-
 
 protocol Builder{
     static func createLaunch() -> UIViewController
     static func createMain() -> UIViewController
     static func createChartacter() -> UIViewController
     static func createDetailCharacter(dataCharacter: CharactersResult?) -> UIViewController
-    static func createFilter(delegateByFilter: CharacterViewController?) -> UIViewController
     static func createLocation() -> UIViewController
+    static func createEpisode() -> UIViewController
+    static func createFilter(parentPresent: CharacterPresenterProtocol?) -> UIViewController
 }
 
 class ModuleBuilder:Builder {
-
     static func createLaunch() -> UIViewController {
         let view = LaunchViewController()
         let presenter = LaunchPresenter(view: view)
@@ -38,14 +30,6 @@ class ModuleBuilder:Builder {
         return view 
     }
     
-    static func createLocation() -> UIViewController {
-        let view = LocationViewController()
-        let networkManager = NetworkManager()
-        let presenter = LocationPresenter(view: view, networkManager: networkManager)
-        view.presenter = presenter
-        return view
-    }
-    
     static func createChartacter() -> UIViewController {
         let view = CharacterViewController()
         let networkManager = NetworkManager()
@@ -62,14 +46,28 @@ class ModuleBuilder:Builder {
         return view
     }
     
-    static func createFilter(delegateByFilter: CharacterViewController?) -> UIViewController {
-        let view = FilterViewController()
-//        let viewParent = CharacterViewController()
-        let userDefaultsManager = UserDefaultsManager()
-        let presenter = FilterPresenter(view: view,  userDefaultsManager: userDefaultsManager  )
+    static func createLocation() -> UIViewController {
+        let view = LocationViewController()
+        let networkManager = NetworkManager()
+        let presenter = LocationPresenter(view: view, networkManager: networkManager)
         view.presenter = presenter
-        view.characterFilterDelegate = delegateByFilter
         return view
     }
     
+    static func createEpisode() -> UIViewController {
+        let view = EpisodeViewController()
+        let networkManager = NetworkManager()
+        let presenter = EpisodePresenter(view: view, networkManager: networkManager)
+        view.presenter = presenter
+        return view
+    }
+    
+    static func createFilter(parentPresent: CharacterPresenterProtocol?) -> UIViewController {
+        let view = FilterViewController()
+        let userDefaultsManager = UserDefaultsManager()
+        let presenter = FilterPresenter(view: view,  userDefaultsManager: userDefaultsManager  )
+        view.presenter = presenter
+        view.parentPresent = parentPresent
+        return view
+    }
 }

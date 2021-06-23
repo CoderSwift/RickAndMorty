@@ -1,15 +1,15 @@
 import Foundation
 
-struct LocationsData {
+struct LocationsData:Decodable {
     var info: LocationsInfo?
-    var results: LocationsResult?
+    var results: [LocationsResult]?
 }
 
-struct LocationsInfo {
-    var page: Int?
+struct LocationsInfo:Decodable {
+    var pages: Int?
 }
 
-struct LocationsResult {
+struct LocationsResult:Decodable {
     var name: String?
     var type: String?
     var dimension: String?

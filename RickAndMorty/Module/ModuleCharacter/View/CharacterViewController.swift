@@ -1,26 +1,12 @@
-//
-//  ListViewController.swift
-//  RickAndMorty
-//
-//  Created by coder on 29.05.21.
-//
-
 import UIKit
-
 
 class CharacterViewController: UIViewController {
     
-    var presenter: CharacterPresenterProtocol!
     var collectionView: UICollectionView!
     var searchTextField = SearchTextField()
-    var titlePage:String?
-    var filter: FilterUserDefaults?
-    var userdefaults: FilterUserDefaults?
-    var selected = false
-    
+    var presenter: CharacterPresenterProtocol!
     
     override func viewDidLoad() {
-        
         super.viewDidLoad()
         setStyleViewController()
         configureSearchTextFild()
@@ -32,9 +18,7 @@ class CharacterViewController: UIViewController {
     }
     
     func setStyleViewController (){
-        self.filter = UserDefaultsManager.shared.getSettings()
-        self.view.backgroundColor = Backgrounds.darkGray
-        
+        view.backgroundColor = Backgrounds.darkGray
     }
     
     func configureSearchTextFild() {
@@ -47,13 +31,10 @@ class CharacterViewController: UIViewController {
             searchTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Constraints.marginTopBottom),
             searchTextField.heightAnchor.constraint(equalToConstant: Constraints.heightSearchTextField)
         ])
-        
     }
     
     func setFilterButton() {
-        
         let buttonFilter   = UIButton(frame: CGRect.init(x: 0, y: 0, width: 14, height: 14))
-        
         buttonFilter.setImage(Image.iconFilter, for: .normal)
         let menuBarItem = UIBarButtonItem(customView: buttonFilter)
         let currWidth = menuBarItem.customView?.widthAnchor.constraint(equalToConstant: 30)
@@ -62,16 +43,14 @@ class CharacterViewController: UIViewController {
         currHeight?.isActive = true
         self.navigationItem.rightBarButtonItem = menuBarItem
         buttonFilter.addTarget(self, action: #selector(filterTap), for: .touchUpInside)
-        
     }
     
     @objc func filterTap(){
-        let filterViewController = ModuleBuilder.createFilter(delegateByFilter: self)
+        let filterViewController = ModuleBuilder.createFilter(parentPresent: presenter)
         self.navigationController?.pushViewController(filterViewController, animated: true)
     }
     
     func configureCollectionView () {
-    
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         view.addSubview(collectionView)
         collectionView.backgroundColor = .clear
@@ -89,48 +68,35 @@ class CharacterViewController: UIViewController {
             collectionView.topAnchor.constraint(equalTo:searchTextField.bottomAnchor, constant: Constraints.margin)
 
         ])
-        
     }
 }
 
 extension CharacterViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout{
-    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
         return CGSize(width: (self.view.frame.width - (Constraints.margin*3))/2, height: Cell.characterCellHeight)
-        
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        
         return Constraints.margin
-        
     }
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        
         return Constraints.margin
-        
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        
         return UIEdgeInsets.init(top: .zero, left: Constraints.margin, bottom: .zero, right: Constraints.margin)
-        
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
         return presenter.characterData.count
-        
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CharacterCollectionViewCell.reuseID, for: indexPath) as!  CharacterCollectionViewCell
         presenter.setPlacholderForCell(cell: cell)
         cell.setData(dataModel: presenter.characterData[indexPath.row])
         return cell
-        
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -141,13 +107,11 @@ extension CharacterViewController: UICollectionViewDelegate, UICollectionViewDat
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         self.presenter.loadMoreData(scrollView: scrollView, collectionView: collectionView)
-        
     }
 }
 
 extension CharacterViewController: CharacterViewProtocol {
-    
-    func setLoading() {
+    func loadingPage() {
         collectionView.restore()
         collectionView.reloadData()
         collectionView.setLoading()
@@ -159,15 +123,11 @@ extension CharacterViewController: CharacterViewProtocol {
     }
     
     func failure() {
-
-        self.collectionView.setError(superview: self.view)
-        
+        collectionView.setError(superview: self.view)
     }
-    
 }
 
 extension CharacterViewController: UITextFieldDelegate {
-
     func textFieldDidChangeSelection(_ textField: UITextField) {
         self.presenter.requestDataByName(textField: textField)
     }
@@ -175,12 +135,5 @@ extension CharacterViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
-    }
-    
-}
-
-extension CharacterViewController: CharacterFilterDelegate{
-    func tapApplyFilter() {
-        self.presenter.requestDataByFilter()
     }
 }
