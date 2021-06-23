@@ -1,45 +1,37 @@
 import UIKit
 
-protocol CharacterViewProtocol   {
+protocol CharacterViewProtocol: AnyObject {
     func succes()
     func failure()
     func loadingPage()
 }
 
-protocol CharacterPresenterProtocol   {
-    init(view: CharacterViewProtocol,  userDefaultsManager:UserDefaultsManagerProtocol,  networkManager: NetworkManagerProtocol)
-    var searchQuery: String {get set}
-    var currentStatus: String {get set}
-    var currentGender: String {get set}
+protocol CharacterPresenterProtocol: AnyObject {
+    init(view: CharacterViewProtocol,   networkManager: NetworkManagerProtocol)
     var characterData: [CharactersResult] {get set}
     func setPlacholderForCell(cell:CharacterCollectionViewCell)
     func loadMoreData(scrollView: UIScrollView, collectionView: UICollectionView)
     func requestDataByName(textField: UITextField)
     func requestDataByFilter()
-    func setUserDefault()
     func getCharacter()
+    func setUserDefault()
     func collectionError(collectionView: UICollectionView, view: UIView)
-    
 }
 
-
 class CharacterPresenter: CharacterPresenterProtocol {
-    
-    var view: CharacterViewProtocol
+    weak var view: CharacterViewProtocol?
     let networkManager: NetworkManagerProtocol!
-    let userDefaultsManager: UserDefaultsManagerProtocol!
     var characterData = [CharactersResult]()
-    var filter: FilterUserDefaults?
-    var countPage = 1
-    var searchQuery = ""
-    var currentStatus = ""
-    var currentGender = ""
-    var loadMore = true
-    var loadingPage = false
+    private var filter: FilterUserDefaults?
+    private var countPage = 1
+    private var searchQuery = ""
+    private var currentStatus = ""
+    private var currentGender = ""
+    private var loadMore = true
+    private var loadingPage = false
     
-    required init(view: CharacterViewProtocol,   userDefaultsManager:UserDefaultsManagerProtocol, networkManager: NetworkManagerProtocol) {
+    required init(view: CharacterViewProtocol, networkManager: NetworkManagerProtocol) {
         self.view = view
-        self.userDefaultsManager = userDefaultsManager
         self.networkManager = networkManager
     }
     
@@ -52,7 +44,7 @@ class CharacterPresenter: CharacterPresenterProtocol {
         searchQuery = textString
         countPage = 1
         characterData.removeAll()
-        self.view.loadingPage()
+        view?.loadingPage()
         if characterData.isEmpty {
             self.loadingPage = false
             self.loadMore = true
@@ -60,19 +52,17 @@ class CharacterPresenter: CharacterPresenterProtocol {
         getCharacter()
     }
     
-    
     func setUserDefault(){
-        self.filter = UserDefaultsManager.shared.getSettings()
-        self.currentStatus = self.filter!.status
-        self.currentGender = self.filter!.gender
-        
+        filter = UserDefaultsManager.shared.getFilter()
+        currentStatus = self.filter!.status
+        currentGender = self.filter!.gender
     }
     
     func requestDataByFilter() {
         setUserDefault()
         countPage = 1
         characterData.removeAll()
-        self.view.loadingPage()
+        view?.loadingPage()
         if characterData.isEmpty {
             self.loadingPage = false
             self.loadMore = true
@@ -100,14 +90,14 @@ class CharacterPresenter: CharacterPresenterProtocol {
         }
         loadingPage = true
         
-        networkManager.getCharacter(page: countPage, name: searchQuery, status: self.currentStatus, gender:self.currentGender) { [weak self] result  in
+        networkManager.getCharacter(page: countPage, name: searchQuery, status:currentStatus, gender:currentGender) { [weak self] result  in
             guard let self = self else {return}
             
             DispatchQueue.main.async {
                 switch result {
                 case .success(let character):
                     if character?.results == nil{
-                        self.view.failure()
+                        self.view?.failure()
                     } else {
                         guard let data = character?.results else {return}
                         self.characterData.append(contentsOf: data)
@@ -116,11 +106,11 @@ class CharacterPresenter: CharacterPresenterProtocol {
                             self.loadMore = false
                         }
                         self.countPage += 1
-                        self.view.succes()
+                        self.view?.succes()
                     }
                 case .failure:
                     self.loadingPage = false
-                    self.view.failure()
+                    self.view?.failure()
                 }
             }
         }

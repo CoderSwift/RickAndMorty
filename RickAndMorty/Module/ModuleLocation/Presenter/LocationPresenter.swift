@@ -1,21 +1,13 @@
-//
-//  LocationPresenter.swift
-//  RickAndMorty
-//
-//  Created by coder on 18.06.21.
-//
-
 import UIKit
 
-protocol LocationViewProtocol {
+protocol LocationViewProtocol:AnyObject {
     func succes()
     func failure()
     func loadingPage()
 }
 
-protocol LocationPresenterProtocol {
+protocol LocationPresenterProtocol:AnyObject {
     init(view: LocationViewProtocol, networkManager: NetworkManagerProtocol)
-    var searchQuery: String {get set}
     var locationData: [LocationsResult] {get set}
     func loadMoreData(scrollView: UIScrollView, tableView: UITableView)
     func requestByName(textField: UITextField)
@@ -24,20 +16,18 @@ protocol LocationPresenterProtocol {
 }
 
 class LocationPresenter: LocationPresenterProtocol {
-            
-    var view:LocationViewProtocol?
+    weak var view:LocationViewProtocol?
     var networkManager: NetworkManagerProtocol?
     var locationData = [LocationsResult]()
-    var searchQuery = ""
-    var countPage = 1
-    var loadMore = true
-    var loadingPage = false
+    private var searchQuery = ""
+    private var countPage = 1
+    private var loadMore = true
+    private var loadingPage = false
     
     required init(view: LocationViewProtocol, networkManager: NetworkManagerProtocol) {
         self.view = view
         self.networkManager = networkManager
     }
-    
     
     func loadMoreData(scrollView: UIScrollView, tableView: UITableView) {
         let position = scrollView.contentOffset.y
@@ -54,7 +44,7 @@ class LocationPresenter: LocationPresenterProtocol {
         searchQuery = textString
         countPage = 1
         locationData.removeAll()
-        self.view?.loadingPage()
+        view?.loadingPage()
         if locationData.isEmpty {
             self.loadingPage = false
             self.loadMore = true
@@ -67,7 +57,7 @@ class LocationPresenter: LocationPresenterProtocol {
             return
         }
         loadingPage = true
-        
+    
         networkManager?.getLocation(page: countPage, name: searchQuery, completion: { [weak self] result in
             guard let self = self else {return}
             DispatchQueue.main.async {

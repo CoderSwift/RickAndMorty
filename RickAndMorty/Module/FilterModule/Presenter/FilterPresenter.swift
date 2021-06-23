@@ -1,70 +1,60 @@
-//
-//  FilterPresenter.swift
-//  RickAndMorty
-//
-//  Created by coder on 8.06.21.
-//
+import UIKit
 
-import Foundation
-
-
-protocol FilterViewProtocol {
-    func reloadCollectionView()
+protocol FilterViewProtocol:AnyObject {
+    func succes()
 }
 
-protocol FilterPresenterProtocol {
-    init(view: FilterViewProtocol,  userDefaultsManager: UserDefaultsManagerProtocol)
-    var view: FilterViewProtocol {get set}
-    func setFilterToUserDefaults()
-    func setFilterSelected()
-    var currentStatus: String {get set}
-    var currentGender: String {get set}
+protocol FilterPresenterProtocol:AnyObject {
+    init(view: FilterViewProtocol)
     var filterStatus:[Status] {get set}
     var filterGender:[Gender] {get set}
     var stateCellStatus:[String : Int?] {get set}
     var stateCellGender:[String : Int?] {get set}
+    func setFilterToUserDefaults()
+    func setFilterSelected()
+    func saveFilter()
     func selectedOptionFiltered(indexPath: IndexPath)
+    func setHeaderViewForTableView(section: Int) -> UIView
 }
 
 class FilterPresenter: FilterPresenterProtocol {
-        
-    var view: FilterViewProtocol
-    let userDefaultsManager: UserDefaultsManagerProtocol!
+    private let cell = FilterTableViewCell()
+    weak var view: FilterViewProtocol?
     var filter: FilterUserDefaults?
-    
+    var selectedFilterDelegate: SelectedFilterDelegate?
     var filterStatus:[Status] = [.alive,.dead,.unknown]
     var filterGender:[Gender] = [.female,.male,.genderless,.unknown]
-    var currentStatus = ""
-    var currentGender = ""
-    var currentIndexFilter = ["Status": Int?.none, "Gender": Int?.none]
+    private var currentStatus = ""
+    private var currentGender = ""
+    private var currentIndexFilter = ["Status": Int?.none, "Gender": Int?.none]
     var stateCellStatus:[String : Int?] = ["selectedStatus": nil, "resetStatus": nil]{
         didSet{
-            view.reloadCollectionView()
-           
+            view?.succes()
         }
     }
-    
     var stateCellGender:[String : Int?] = ["resetGender": nil, "selectedGender": nil ] {
         didSet{
-            view.reloadCollectionView()
+            view?.succes()
         }
     }
     
-    
-    required init(view:FilterViewProtocol,  userDefaultsManager: UserDefaultsManagerProtocol) {
+    required init(view:FilterViewProtocol) {
         self.view = view
-        self.userDefaultsManager = userDefaultsManager
     }
     
-    
     func setFilterToUserDefaults() {
-        self.filter = UserDefaultsManager.shared.getSettings()
-        self.filter?.gender = self.currentGender
-        self.filter?.status = self.currentStatus
+        filter = UserDefaultsManager.shared.getFilter()
+        filter?.gender = currentGender
+        filter?.status = currentStatus
+        filter = FilterUserDefaults(status: currentGender, gender: currentStatus)
+    }
+    
+    func saveFilter() {
+        UserDefaultsManager.shared.setFilter(filter!)
     }
     
     func setFilterSelected() {
-        self.filter = UserDefaultsManager.shared.getSettings()
+        filter = UserDefaultsManager.shared.getFilter()
         currentGender = filter?.gender ?? ""
         currentStatus = filter?.status ?? ""
         for element in filterStatus where element.rawValue ==  filter?.status {
@@ -75,38 +65,59 @@ class FilterPresenter: FilterPresenterProtocol {
         }
         stateCellStatus["selectedStatus"] = currentIndexFilter["Status"]
         stateCellGender["selectedGender"] = currentIndexFilter["Gender"]
-        
     }
     
-    func updateStatusIndex(_ indexPath: IndexPath) {
+    private func updateStatusIndex(_ indexPath: IndexPath) {
         stateCellStatus["selectedStatus"] = indexPath.row
         stateCellStatus["resetStatus"] = indexPath.section
     }
-    func updateGenderIndex(_ indexPath: IndexPath) {
+    
+    private func updateGenderIndex(_ indexPath: IndexPath) {
         stateCellGender["selectedGender"] = indexPath.row
         stateCellGender["resetGender"] = indexPath.section
     }
-//    func resetStatusIndex(_ index: Int) {
-//        stateCellStatus["resetStatus"] = index
-//    }
-//    func resetGenderIndex(_ index: Int) {
-//        stateCellGender["resetGender"] = index
-//    }
     
     func selectedOptionFiltered(indexPath: IndexPath) {
         switch indexPath.section{
-            case 0:
-                updateStatusIndex(indexPath)
-//                resetStatusIndex(indexPath.section)
-                currentStatus = filterStatus[indexPath.row].rawValue
-            default:
-                updateGenderIndex(indexPath)
-//                resetGenderIndex(indexPath.section)
-               currentGender = filterGender[indexPath.row].rawValue
-                print()
+        case 0:
+            updateStatusIndex(indexPath)
+            currentStatus = filterStatus[indexPath.row].rawValue
+        default:
+            updateGenderIndex(indexPath)
+            currentGender = filterGender[indexPath.row].rawValue
         }
     }
     
+    func setHeaderViewForTableView(section: Int) -> UIView {
+        let headerView = HeaderFilterView(frame: .zero)
+        selectedFilterDelegate = cell
+        
+        switch section {
+        case 0:
+            headerView.setTitle(title: "Status")
+            currentStatus == "" ? headerView.setEnabledButton(false) : headerView.setEnabledButton(true)
+            headerView.resetButton.addTarget(self, action: #selector(tapForSectionStatus), for: .touchUpInside)
+        default:
+            headerView.setTitle(title: "Gender")
+            currentGender == "" ? headerView.setEnabledButton(false)  : headerView.setEnabledButton(true)
+            headerView.resetButton.addTarget(self, action: #selector(tapForSectionGender), for: .touchUpInside)
+        }
+        return headerView
+    }
+    
+    @objc func tapForSectionStatus(){
+        selectedFilterDelegate?.isSelectedAll(false)
+        view?.succes()
+        stateCellStatus.removeAll()
+        currentStatus = ""
+    }
+    
+    @objc func tapForSectionGender(){
+        selectedFilterDelegate?.isSelectedAll(false)
+        view?.succes()
+        stateCellGender.removeAll()
+        currentGender = ""
+    }
 }
 
 

@@ -33,8 +33,7 @@ class ModuleBuilder:Builder {
     static func createChartacter() -> UIViewController {
         let view = CharacterViewController()
         let networkManager = NetworkManager()
-        let userDefaultsManager = UserDefaultsManager()
-        let presenter = CharacterPresenter(view: view, userDefaultsManager: userDefaultsManager,   networkManager: networkManager)
+        let presenter = CharacterPresenter(view: view,  networkManager: networkManager)
         view.presenter = presenter
         return view
     }
@@ -64,8 +63,7 @@ class ModuleBuilder:Builder {
     
     static func createFilter(parentPresent: CharacterPresenterProtocol?) -> UIViewController {
         let view = FilterViewController()
-        let userDefaultsManager = UserDefaultsManager()
-        let presenter = FilterPresenter(view: view,  userDefaultsManager: userDefaultsManager  )
+        let presenter = FilterPresenter(view: view)
         view.presenter = presenter
         view.parentPresent = parentPresent
         return view

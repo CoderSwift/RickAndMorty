@@ -1,28 +1,18 @@
-//
-//  DetailCharacterPresenter.swift
-//  RickAndMorty
-//
-//  Created by coder on 6.06.21.
-//
-
 import UIKit
 
-protocol DetailCharacterViewProtocol{
+protocol DetailCharacterViewProtocol:AnyObject {
     func setCharacter(dataCharacter: CharactersResult?)
 }
 
-protocol DetailCharacterPresenterProtocol{
-    var view: DetailCharacterViewProtocol{ get }
+protocol DetailCharacterPresenterProtocol: AnyObject {
     var characterData: CharactersResult? {get set}
     var characterDataRow: [CharactersResultType] {get set}
     func setCharacter()
 }
 
-class DetailCharacterPresenter:DetailCharacterPresenterProtocol {
-
-    var view: DetailCharacterViewProtocol
+class DetailCharacterPresenter: DetailCharacterPresenterProtocol {
+    weak var view: DetailCharacterViewProtocol?
     var characterData: CharactersResult?
-    
     var characterDataRow: [CharactersResultType] = [
         .name,
         .gender,
@@ -36,7 +26,6 @@ class DetailCharacterPresenter:DetailCharacterPresenterProtocol {
     }
     
     func setCharacter() {
-        self.view.setCharacter(dataCharacter: characterData)
+        self.view?.setCharacter(dataCharacter: characterData)
     }
-    
 }

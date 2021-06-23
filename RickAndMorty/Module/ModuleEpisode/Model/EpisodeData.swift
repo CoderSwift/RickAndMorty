@@ -1,8 +1,18 @@
-//
-//  EpisodeData.swift
-//  RickAndMorty
-//
-//  Created by coder on 22.06.21.
-//
-
 import Foundation
+
+struct EpisodeData:Decodable {
+    var info: EpisodeInfo?
+    var results: [EpisodeResult]?
+}
+
+struct EpisodeInfo:Decodable {
+    var pages: Int?
+}
+
+struct EpisodeResult:Decodable {
+    var name: String?
+    var air_date: String?
+    var episode: String?
+}
+
+

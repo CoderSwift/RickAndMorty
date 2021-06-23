@@ -1,12 +1,4 @@
-//
-//  Endpoint.swift
-//  RickAndMorty
-//
-//  Created by coder on 14.06.21.
-//
-
 import UIKit
-
 
 struct Endpoint {
     var path: String
@@ -20,13 +12,11 @@ extension Endpoint {
             components.host = "rickandmortyapi.com"
             components.path = "/" + path
             components.queryItems = queryItems
-        
         guard let url = components.url else {
             preconditionFailure(
                 "Invalid URL components: \(components)"
             )
         }
-        
         return url
     }
     
@@ -36,7 +26,20 @@ extension Endpoint {
             URLQueryItem(name: "name", value: name),
             URLQueryItem(name: "status", value: status),
             URLQueryItem(name: "gender", value: gender)
-            
+        ])
+    }
+    
+    static func getLocation(page:Int, name: String) -> Self {
+        Endpoint(path: "api/location/", queryItems: [
+            URLQueryItem(name: "page", value: String(describing: page)),
+            URLQueryItem(name: "name", value: name)
+        ])
+    }
+    
+    static func getEpisode(page:Int, name: String) -> Self {
+        Endpoint(path: "api/episode/", queryItems: [
+            URLQueryItem(name: "page", value: String(describing: page)),
+            URLQueryItem(name: "name", value: name)
         ])
     }
 }

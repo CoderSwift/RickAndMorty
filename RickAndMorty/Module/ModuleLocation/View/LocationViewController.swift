@@ -1,86 +1,77 @@
 import UIKit
 
 class LocationViewController: UIViewController {
-    
     var tableView: UITableView!
-    var searchTextField = SearchTextField()
+    private var searchTextField = SearchTextField()
     var presenter: LocationPresenter!
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setStyleViewController()
         configureSearchTextField()
-        configureCollectionView()
+        configureTableView()
         dismissKey()
         tableView.setLoading()
         presenter?.getLocation()
     }
     
-    func setStyleViewController() {
+    private func setStyleViewController() {
         view.backgroundColor = Backgrounds.darkGray
     }
     
-    func configureSearchTextField() {
+    private func configureSearchTextField() {
         view.addSubview(searchTextField)
         searchTextField.delegate = self
         
         NSLayoutConstraint.activate([
-        
             searchTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constraints.margin),
             searchTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constraints.margin),
             searchTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Constraints.margin),
             searchTextField.heightAnchor.constraint(equalToConstant: Constraints.heightSearchTextField)
-            
         ])
     }
     
-    func configureCollectionView() {
-        tableView = UITableView()
+    private func configureTableView() {
+        tableView                                               = UITableView()
         view.addSubview(tableView)
-        tableView.backgroundColor = .clear
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-      
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.showsVerticalScrollIndicator = false
-        tableView.separatorStyle = .none
-        self.tableView.rowHeight = UITableView.automaticDimension
-        tableView.register(LocationTableViewCell.self, forCellReuseIdentifier: LocationTableViewCell.reuseID)
+        tableView.backgroundColor                               = .clear
+        tableView.translatesAutoresizingMaskIntoConstraints     = false
+        tableView.dataSource                                    = self
+        tableView.delegate                                      = self
+        tableView.showsVerticalScrollIndicator                  = false
+        tableView.separatorStyle                                = .none
+        tableView.rowHeight                                     = UITableView.automaticDimension
+        tableView.register(LocationTableViewCell.self, forCellReuseIdentifier: Cell.reuseLocationID)
         
         NSLayoutConstraint.activate([
-        
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: .zero),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: .zero),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: .zero),
             tableView.topAnchor.constraint(equalTo: searchTextField.bottomAnchor, constant: Constraints.margin)
-            
-        
         ])
     }
-    
 }
 
 extension LocationViewController: UITableViewDelegate, UITableViewDataSource {
-
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return presenter.locationData.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: LocationTableViewCell.reuseID, for: indexPath) as! LocationTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: Cell.reuseLocationID, for: indexPath) as! LocationTableViewCell
         cell.setData(dataModel: presenter?.locationData[indexPath.row])
         return cell
     }
+    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        self.presenter.loadMoreData(scrollView: scrollView, tableView: tableView)
+        presenter.loadMoreData(scrollView: scrollView, tableView: tableView)
     }
   
 }
 
 extension LocationViewController: UITextFieldDelegate{
     func textFieldDidChangeSelection(_ textField: UITextField) {
-        self.presenter?.requestByName(textField: textField)
+        presenter?.requestByName(textField: textField)
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -91,7 +82,7 @@ extension LocationViewController: UITextFieldDelegate{
 
 extension LocationViewController: LocationViewProtocol {
     func succes() {
-        tableView.restore()
+        tableView.resetError()
         tableView.reloadData()
     }
     
@@ -100,7 +91,7 @@ extension LocationViewController: LocationViewProtocol {
     }
     
     func loadingPage() {
-        tableView.restore()
+        tableView.resetError()
         tableView.reloadData()
         tableView.setLoading()
     }

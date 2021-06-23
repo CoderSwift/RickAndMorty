@@ -13,7 +13,7 @@ extension UITableView {
         backgroundView = error
     }
     
-    func restore() {
+    func resetError() {
         backgroundView = nil
     }
 }

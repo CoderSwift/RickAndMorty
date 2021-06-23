@@ -1,25 +1,16 @@
-//
-//  LaunchPresenter.swift
-//  RickAndMorty
-//
-//  Created by coder on 12.06.21.
-//
-
 import UIKit
 
-
-protocol LaunchViewProtocol {
+protocol LaunchViewProtocol: AnyObject {
     
 }
 
-protocol LaunchPresenterProtocol {
+protocol LaunchPresenterProtocol: AnyObject {
     init (view:LaunchViewProtocol)
 }
 
 class LaunchPresenter:LaunchPresenterProtocol {
-    
-    var view:  LaunchViewProtocol?
-    var repeatCount = 0
+    weak var view:  LaunchViewProtocol?
+    private var repeatCount = 0
     var callback:  () -> () = {}
     
     required init(view: LaunchViewProtocol) {
@@ -40,11 +31,9 @@ class LaunchPresenter:LaunchPresenterProtocol {
                 }
             }
             repeatCount += 1
-           
         } else {
             callback()
         }
-        
     }
     
 }

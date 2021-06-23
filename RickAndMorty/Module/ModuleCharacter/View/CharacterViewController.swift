@@ -3,7 +3,7 @@ import UIKit
 class CharacterViewController: UIViewController {
     
     var collectionView: UICollectionView!
-    var searchTextField = SearchTextField()
+    private var searchTextField = SearchTextField()
     var presenter: CharacterPresenterProtocol!
     
     override func viewDidLoad() {
@@ -14,14 +14,15 @@ class CharacterViewController: UIViewController {
         setFilterButton()
         dismissKey()
         collectionView.setLoading()
+        presenter.setUserDefault()
         presenter.getCharacter()
     }
     
-    func setStyleViewController (){
+    private func setStyleViewController (){
         view.backgroundColor = Backgrounds.darkGray
     }
     
-    func configureSearchTextFild() {
+    private func configureSearchTextFild() {
         view.addSubview(searchTextField)
         searchTextField.delegate = self
     
@@ -33,47 +34,45 @@ class CharacterViewController: UIViewController {
         ])
     }
     
-    func setFilterButton() {
-        let buttonFilter   = UIButton(frame: CGRect.init(x: 0, y: 0, width: 14, height: 14))
+    private func setFilterButton() {
+        let buttonFilter = UIButton(frame: CGRect.init(x: 0, y: 0, width: 14, height: 14))
         buttonFilter.setImage(Image.iconFilter, for: .normal)
         let menuBarItem = UIBarButtonItem(customView: buttonFilter)
         let currWidth = menuBarItem.customView?.widthAnchor.constraint(equalToConstant: 30)
         currWidth?.isActive = true
         let currHeight = menuBarItem.customView?.heightAnchor.constraint(equalToConstant: 30)
         currHeight?.isActive = true
-        self.navigationItem.rightBarButtonItem = menuBarItem
+        navigationItem.rightBarButtonItem = menuBarItem
         buttonFilter.addTarget(self, action: #selector(filterTap), for: .touchUpInside)
     }
     
     @objc func filterTap(){
         let filterViewController = ModuleBuilder.createFilter(parentPresent: presenter)
-        self.navigationController?.pushViewController(filterViewController, animated: true)
+        navigationController?.pushViewController(filterViewController, animated: true)
     }
     
-    func configureCollectionView () {
+    private func configureCollectionView () {
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         view.addSubview(collectionView)
-        collectionView.backgroundColor = .clear
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        collectionView.showsVerticalScrollIndicator = false
-        collectionView.register(CharacterCollectionViewCell.self, forCellWithReuseIdentifier: CharacterCollectionViewCell.reuseID)
+        collectionView.backgroundColor                              = .clear
+        collectionView.translatesAutoresizingMaskIntoConstraints    = false
+        collectionView.delegate                                     = self
+        collectionView.dataSource                                   = self
+        collectionView.showsVerticalScrollIndicator                 = false
+        collectionView.register(CharacterCollectionViewCell.self, forCellWithReuseIdentifier: Cell.reuseCharacterID)
         
         NSLayoutConstraint.activate([
-
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: .zero),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: .zero),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: .zero),
             collectionView.topAnchor.constraint(equalTo:searchTextField.bottomAnchor, constant: Constraints.margin)
-
         ])
     }
 }
 
 extension CharacterViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: (self.view.frame.width - (Constraints.margin*3))/2, height: Cell.characterCellHeight)
+        return CGSize(width: (self.view.frame.width - (Constraints.margin*3))/2, height: Constraints.characterCellHeight)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
@@ -93,7 +92,7 @@ extension CharacterViewController: UICollectionViewDelegate, UICollectionViewDat
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CharacterCollectionViewCell.reuseID, for: indexPath) as!  CharacterCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Cell.reuseCharacterID, for: indexPath) as!  CharacterCollectionViewCell
         presenter.setPlacholderForCell(cell: cell)
         cell.setData(dataModel: presenter.characterData[indexPath.row])
         return cell
@@ -102,23 +101,23 @@ extension CharacterViewController: UICollectionViewDelegate, UICollectionViewDat
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let dataCharacter = presenter.characterData[indexPath.row]
         let detailCharacterViewController = ModuleBuilder.createDetailCharacter(dataCharacter: dataCharacter)
-        self.navigationController?.pushViewController(detailCharacterViewController , animated: true)
+        navigationController?.pushViewController(detailCharacterViewController , animated: true)
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        self.presenter.loadMoreData(scrollView: scrollView, collectionView: collectionView)
+        presenter.loadMoreData(scrollView: scrollView, collectionView: collectionView)
     }
 }
 
 extension CharacterViewController: CharacterViewProtocol {
     func loadingPage() {
-        collectionView.restore()
+        collectionView.resetError()
         collectionView.reloadData()
         collectionView.setLoading()
     }
     
     func succes() {
-        collectionView.restore()
+        collectionView.resetError()
         collectionView.reloadData()
     }
     
@@ -129,7 +128,7 @@ extension CharacterViewController: CharacterViewProtocol {
 
 extension CharacterViewController: UITextFieldDelegate {
     func textFieldDidChangeSelection(_ textField: UITextField) {
-        self.presenter.requestDataByName(textField: textField)
+        presenter.requestDataByName(textField: textField)
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {

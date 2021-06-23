@@ -1,14 +1,6 @@
-//
-//  ImageView.swift
-//  RickAndMorty
-//
-//  Created by coder on 20.05.21.
-//
-
 import UIKit
 
 class CustomImageView: UIImageView {
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()
@@ -20,15 +12,13 @@ class CustomImageView: UIImageView {
     
     convenience init(radius:CGFloat, frame:CGRect, contentMode: UIView.ContentMode ) {
         self.init(frame: .zero)
-        layer.cornerRadius = radius
-        self.contentMode = contentMode
+        layer.cornerRadius                          = radius
+        self.contentMode                            = contentMode
     }
     
     private func configure() {
-        clipsToBounds               = true
-        isUserInteractionEnabled    = true
-        translatesAutoresizingMaskIntoConstraints = false
+        clipsToBounds                               = true
+        isUserInteractionEnabled                    = true
+        translatesAutoresizingMaskIntoConstraints   = false
     }
-    
-    
 }

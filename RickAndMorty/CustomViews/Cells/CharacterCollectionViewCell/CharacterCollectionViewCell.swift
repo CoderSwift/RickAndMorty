@@ -1,24 +1,13 @@
-//
-//  CharacterCollectionViewCell.swift
-//  RickAndMorty
-//
-//  Created by coder on 2.06.21.
-//
-
 import UIKit
 
-class CharacterCollectionViewCell:UICollectionViewCell {
-    
-    static let reuseID = "CharacterCell"
-    
+class CharacterCollectionViewCell: UICollectionViewCell {
     let imageCell = CustomImageView(radius: 15, frame: .zero, contentMode: .scaleAspectFill)
     let labelView = UIView()
-    
     let titleLabel = CustomLabel(textAlignment: .center, color: .black, font: UIFont.boldFont(ofSize: 16))
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        configureCell()
+        configure()
     }
     
     required init?(coder: NSCoder) {
@@ -31,18 +20,22 @@ class CharacterCollectionViewCell:UICollectionViewCell {
         self.titleLabel.text = dataModel?.name
     }
     
-    func configureCell() {
-        addSubviews(imageCell,labelView,titleLabel)
-        labelView.backgroundColor = .white
-        imageCell.image = Image.placeholderImage
-        imageCell.translatesAutoresizingMaskIntoConstraints = false
-        labelView.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        labelView.alpha = 0.5
-        labelView.shadowDecorate(radius: 15, byRoundingCorners: [.layerMaxXMaxYCorner,.layerMinXMaxYCorner], shadowSize: 0, shadowOpacity: 0)
+    private func configure() {
         shadowDecorate(radius: 15,  byRoundingCorners: [],  shadowSize: 5, shadowOpacity: 0.3)
-        NSLayoutConstraint.activate([
         
+        addSubviews(imageCell,labelView,titleLabel)
+        
+        imageCell.image                                         = Image.placeholderImage
+        imageCell.translatesAutoresizingMaskIntoConstraints     = false
+        
+        labelView.backgroundColor                               = .white
+        labelView.translatesAutoresizingMaskIntoConstraints     = false
+        labelView.alpha                                         = 0.5
+        labelView.shadowDecorate(radius: 15, byRoundingCorners: [.layerMaxXMaxYCorner,.layerMinXMaxYCorner], shadowSize: 0, shadowOpacity: 0)
+        
+        titleLabel.translatesAutoresizingMaskIntoConstraints    = false
+        
+        NSLayoutConstraint.activate([
             imageCell.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: .zero),
             imageCell.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: .zero),
             imageCell.topAnchor.constraint(equalTo: self.topAnchor,constant: .zero),
@@ -55,9 +48,6 @@ class CharacterCollectionViewCell:UICollectionViewCell {
             
             titleLabel.centerYAnchor.constraint(equalTo: labelView.centerYAnchor),
             titleLabel.centerXAnchor.constraint(equalTo: labelView.centerXAnchor)
-        
         ])
-        
     }
-    
 }

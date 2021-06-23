@@ -1,10 +1,10 @@
 import UIKit
 
 extension UIFont {
-     static func customFont(name: String, size: CGFloat) -> UIFont {
-            let font = UIFont(name: name, size: size)
+    static func customFont(name: String, size: CGFloat) -> UIFont {
+        let font = UIFont(name: name, size: size)
         assert(font != nil, Errors.loadFonts.rawValue)
-            return font ?? UIFont.systemFont(ofSize: size)
+        return font ?? UIFont.systemFont(ofSize: size)
     }
     
     static func semiBoldFont(ofSize size: CGFloat) -> UIFont{
