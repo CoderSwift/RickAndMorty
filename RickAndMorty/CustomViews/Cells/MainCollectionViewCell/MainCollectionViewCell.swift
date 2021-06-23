@@ -1,6 +1,6 @@
 import UIKit
 
-class ThemesCollectionViewCell: UICollectionViewCell {
+class MainCollectionViewCell: UICollectionViewCell {
     
     static let reuseID = "ThemesCell"
     

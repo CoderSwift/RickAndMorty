@@ -3,12 +3,11 @@ import UIKit
 protocol CharacterViewProtocol   {
     func succes()
     func failure()
-    func setLoading()
+    func loadingPage()
 }
 
 protocol CharacterPresenterProtocol   {
     init(view: CharacterViewProtocol,  userDefaultsManager:UserDefaultsManagerProtocol,  networkManager: NetworkManagerProtocol)
-    func getCharacter()
     var searchQuery: String {get set}
     var currentStatus: String {get set}
     var currentGender: String {get set}
@@ -18,6 +17,7 @@ protocol CharacterPresenterProtocol   {
     func requestDataByName(textField: UITextField)
     func requestDataByFilter()
     func setUserDefault()
+    func getCharacter()
     func collectionError(collectionView: UICollectionView, view: UIView)
     
 }
@@ -52,7 +52,7 @@ class CharacterPresenter: CharacterPresenterProtocol {
         searchQuery = textString
         countPage = 1
         characterData.removeAll()
-        self.view.setLoading()
+        self.view.loadingPage()
         if characterData.isEmpty {
             self.loadingPage = false
             self.loadMore = true
@@ -72,7 +72,7 @@ class CharacterPresenter: CharacterPresenterProtocol {
         setUserDefault()
         countPage = 1
         characterData.removeAll()
-        self.view.setLoading()
+        self.view.loadingPage()
         if characterData.isEmpty {
             self.loadingPage = false
             self.loadMore = true
@@ -86,14 +86,13 @@ class CharacterPresenter: CharacterPresenterProtocol {
     
     func loadMoreData(scrollView: UIScrollView, collectionView: UICollectionView) {
         let position = scrollView.contentOffset.y
-        let tableViewContentSizeHeight = collectionView.contentSize.height
+        let collectionViewContentSizeHeight = collectionView.contentSize.height
         let scrollViewHeight = scrollView.frame.size.height
         
-        if position > (tableViewContentSizeHeight - 100 - scrollViewHeight) {
+        if position > (collectionViewContentSizeHeight - 100 - scrollViewHeight) {
             getCharacter()
         }
     }
-    
     
     func getCharacter(){
         guard !loadingPage && loadMore else {
@@ -106,14 +105,14 @@ class CharacterPresenter: CharacterPresenterProtocol {
             
             DispatchQueue.main.async {
                 switch result {
-                case .success(let comments):
-                    if comments?.results == nil{
+                case .success(let character):
+                    if character?.results == nil{
                         self.view.failure()
                     } else {
-                        guard let data = comments?.results else {return}
+                        guard let data = character?.results else {return}
                         self.characterData.append(contentsOf: data)
                         self.loadingPage = false
-                        if comments?.info?.pages == self.countPage {
+                        if character?.info?.pages == self.countPage {
                             self.loadMore = false
                         }
                         self.countPage += 1
