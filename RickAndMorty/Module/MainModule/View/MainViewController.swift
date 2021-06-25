@@ -54,29 +54,12 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Cell.reuseMainID, for: indexPath) as!  MainCollectionViewCell
-        cell.setData(navigationInfo: presenter.navigationInfo[indexPath.row])
-        return cell
+        presenter.reusableCell(collectionView: collectionView, indexPath: indexPath)
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        switch indexPath.row {
-        case 0:
-            let characterViewController = ModuleBuilder.createChartacter()
-            self.navigationController?.pushViewController(characterViewController, animated: true)
-            guard let titlePage = presenter.navigationInfo[indexPath.row].title else {return}
-            characterViewController.navigationItem.title = titlePage
-        case 1:
-            let locationViewController = ModuleBuilder.createLocation()
-            self.navigationController?.pushViewController(locationViewController, animated: true)
-            guard let titlePage = presenter.navigationInfo[indexPath.row].title else {return}
-            locationViewController.navigationItem.title = titlePage
-        default:
-            let episodeViewController = ModuleBuilder.createEpisode()
-            self.navigationController?.pushViewController(episodeViewController, animated: true)
-            guard let titlePage = presenter.navigationInfo[indexPath.row].title else {return}
-            episodeViewController.navigationItem.title = titlePage
-        }
+        presenter.didSelectedCell(indexPath: indexPath, navigationController: self.navigationController)
+
     }
 }
 

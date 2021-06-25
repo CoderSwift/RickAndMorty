@@ -3,8 +3,8 @@ import UIKit
 class FilterViewController: UIViewController {
     private var tableView: UITableView!
     private var filterButton = CustomButton(title: "Apply filter")
-    var presenter: FilterPresenterProtocol?
-    var parentPresent: CharacterPresenterProtocol?
+    var presenter: FilterPresenterProtocol!
+    var parentPresent: CharacterPresenterProtocol!
    
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -95,22 +95,7 @@ extension FilterViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let currentIndex = indexPath.row
-        
-        switch indexPath.section {
-        case 0:
-            let cell = tableView.dequeueReusableCell(withIdentifier: Cell.reuseFilterID, for: indexPath) as! FilterTableViewCell
-            let selected = currentIndex == presenter?.stateCellStatus["selectedStatus"]
-            cell.setTitleCell(title: presenter?.filterStatus[indexPath.row].rawValue)
-            cell.isSelected(selected)
-            return cell
-        default:
-            let cell = tableView.dequeueReusableCell(withIdentifier: Cell.reuseFilterID, for: indexPath) as! FilterTableViewCell
-            let selected = currentIndex == presenter?.stateCellGender["selectedGender"]
-            cell.setTitleCell(title: presenter?.filterGender[indexPath.row].rawValue)
-            cell.isSelected(selected)
-            return cell
-        }
+        presenter.reusableCell(tableView: tableView, indexPath: indexPath)
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

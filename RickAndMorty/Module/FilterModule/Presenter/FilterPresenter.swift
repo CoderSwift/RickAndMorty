@@ -15,6 +15,7 @@ protocol FilterPresenterProtocol:AnyObject {
     func saveFilter()
     func selectedOptionFiltered(indexPath: IndexPath)
     func setHeaderViewForTableView(section: Int) -> UIView
+    func reusableCell(tableView: UITableView, indexPath: IndexPath) -> UITableViewCell
 }
 
 class FilterPresenter: FilterPresenterProtocol {
@@ -85,6 +86,25 @@ class FilterPresenter: FilterPresenterProtocol {
         default:
             updateGenderIndex(indexPath)
             currentGender = filterGender[indexPath.row].rawValue
+        }
+    }
+    
+    func reusableCell(tableView: UITableView, indexPath: IndexPath) -> UITableViewCell {
+        let currentIndex = indexPath.row
+        
+        switch indexPath.section {
+        case 0:
+            let cell = tableView.dequeueReusableCell(withIdentifier: Cell.reuseFilterID, for: indexPath) as! FilterTableViewCell
+            let selected = currentIndex == stateCellStatus["selectedStatus"]
+            cell.setTitleCell(title: filterStatus[indexPath.row].rawValue)
+            cell.isSelected(selected)
+            return cell
+        default:
+            let cell = tableView.dequeueReusableCell(withIdentifier: Cell.reuseFilterID, for: indexPath) as! FilterTableViewCell
+            let selected = currentIndex == stateCellGender["selectedGender"]
+            cell.setTitleCell(title: filterGender[indexPath.row].rawValue)
+            cell.isSelected(selected)
+            return cell
         }
     }
     

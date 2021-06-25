@@ -16,6 +16,7 @@ protocol CharacterPresenterProtocol: AnyObject {
     func getCharacter()
     func setUserDefault()
     func collectionError(collectionView: UICollectionView, view: UIView)
+    func reusableCell(collectionView: UICollectionView, indexPath: IndexPath) -> UICollectionViewCell
 }
 
 class CharacterPresenter: CharacterPresenterProtocol {
@@ -44,7 +45,8 @@ class CharacterPresenter: CharacterPresenterProtocol {
         searchQuery = textString
         countPage = 1
         characterData.removeAll()
-        view?.loadingPage()
+        guard  let view = view else { return print(Errors.loadFonts)}
+        view.loadingPage()
         if characterData.isEmpty {
             self.loadingPage = false
             self.loadMore = true
@@ -72,6 +74,13 @@ class CharacterPresenter: CharacterPresenterProtocol {
     
     func collectionError(collectionView: UICollectionView, view: UIView) {
         collectionView.setError(superview: view)
+    }
+    
+    func reusableCell(collectionView: UICollectionView, indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Cell.reuseCharacterID, for: indexPath) as!  CharacterCollectionViewCell
+        setPlacholderForCell(cell: cell)
+        cell.setData(dataModel: characterData[indexPath.row])
+        return cell
     }
     
     func loadMoreData(scrollView: UIScrollView, collectionView: UICollectionView) {

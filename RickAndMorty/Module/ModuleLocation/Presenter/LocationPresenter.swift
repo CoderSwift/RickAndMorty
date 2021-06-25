@@ -13,6 +13,7 @@ protocol LocationPresenterProtocol:AnyObject {
     func requestByName(textField: UITextField)
     func getLocation()
     func tableViewError(tableView: UITableView, view: UIView)
+    func reusableCell(tableView: UITableView, indexPath: IndexPath) -> UITableViewCell
 }
 
 class LocationPresenter: LocationPresenterProtocol {
@@ -50,6 +51,11 @@ class LocationPresenter: LocationPresenterProtocol {
             self.loadMore = true
         }
         getLocation()
+    }
+    func reusableCell(tableView: UITableView, indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: Cell.reuseLocationID, for: indexPath) as! LocationTableViewCell
+        cell.setData(dataModel: locationData[indexPath.row])
+        return cell
     }
     
     func getLocation() {

@@ -13,6 +13,7 @@ protocol EpisodePresenterProtcol:AnyObject {
     func requestByName(textField: UITextField)
     func getEpisode()
     func tableViewError(tableView: UITableView, view: UIView)
+    func reusableCell(tableView: UITableView, indexPath: IndexPath) -> UITableViewCell
 }
 
 class EpisodePresenter: EpisodePresenterProtcol {
@@ -85,6 +86,12 @@ class EpisodePresenter: EpisodePresenterProtcol {
     
     func tableViewError(tableView: UITableView, view: UIView) {
         tableView.setError(superview: view)
+    }
+    
+    func reusableCell(tableView: UITableView, indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: Cell.reuseEpisodeID, for: indexPath) as! EpisodeTableViewCell
+        cell.setData(dataModel: episodeData[indexPath.row])
+        return cell
     }
     
 }

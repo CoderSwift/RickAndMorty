@@ -74,18 +74,6 @@ extension DetailCharacterViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: Cell.reuseDetailCharacterID, for: indexPath) as! DescriptionCharacterTableViewCell
-        let infoType = presenter.characterDataRow[indexPath.row]
-        switch infoType {
-        case .name:
-            cell.setData(title: infoType.rawValue, value: presenter.characterData?.name)
-        case .status:
-            cell.setData(title: infoType.rawValue, value: presenter.characterData?.status)
-        case .species:
-            cell.setData(title: infoType.rawValue, value: presenter.characterData?.species)
-        case .gender:
-            cell.setData(title: infoType.rawValue, value: presenter.characterData?.gender)
-        }
-        return cell
+        presenter.reusableCell(tableView: tableView, indexPath: indexPath)
     }
 }

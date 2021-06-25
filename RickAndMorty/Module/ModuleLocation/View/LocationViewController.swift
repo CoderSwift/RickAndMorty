@@ -41,6 +41,7 @@ class LocationViewController: UIViewController {
         tableView.showsVerticalScrollIndicator                  = false
         tableView.separatorStyle                                = .none
         tableView.rowHeight                                     = UITableView.automaticDimension
+        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         tableView.register(LocationTableViewCell.self, forCellReuseIdentifier: Cell.reuseLocationID)
         
         NSLayoutConstraint.activate([
@@ -58,9 +59,7 @@ extension LocationViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: Cell.reuseLocationID, for: indexPath) as! LocationTableViewCell
-        cell.setData(dataModel: presenter?.locationData[indexPath.row])
-        return cell
+        presenter.reusableCell(tableView: tableView, indexPath: indexPath)
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {

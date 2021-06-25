@@ -31,8 +31,8 @@ class EpisodeTableViewCell: UITableViewCell {
         NSLayoutConstraint.activate([
             boxViewCell.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Constraints.margin),
             boxViewCell.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Constraints.margin),
-            boxViewCell.topAnchor.constraint(equalTo: topAnchor, constant: Constraints.marginTopBottom),
-            boxViewCell.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -Constraints.marginTopBottom),
+            boxViewCell.topAnchor.constraint(equalTo: topAnchor, constant: .zero),
+            boxViewCell.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -Constraints.margin),
             
             titleLabel.leadingAnchor.constraint(equalTo: boxViewCell.leadingAnchor, constant: Constraints.paddingInnerCell),
             titleLabel.trailingAnchor.constraint(equalTo: boxViewCell.trailingAnchor, constant: -Constraints.paddingInnerCell),

@@ -92,10 +92,7 @@ extension CharacterViewController: UICollectionViewDelegate, UICollectionViewDat
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Cell.reuseCharacterID, for: indexPath) as!  CharacterCollectionViewCell
-        presenter.setPlacholderForCell(cell: cell)
-        cell.setData(dataModel: presenter.characterData[indexPath.row])
-        return cell
+        presenter.reusableCell(collectionView: collectionView, indexPath: indexPath)
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {

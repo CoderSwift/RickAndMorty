@@ -58,9 +58,7 @@ extension EpisodeViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: Cell.reuseEpisodeID, for: indexPath) as! EpisodeTableViewCell
-        cell.setData(dataModel: presenter?.episodeData[indexPath.row])
-        return cell
+        presenter.reusableCell(tableView: tableView, indexPath: indexPath)
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
